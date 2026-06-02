@@ -1,2 +1,2 @@
-FROM maven:3.8.8-openjdk-8
+FROM maven:3.9.16-eclipse-temurin-8
 EXPOSE 8080
