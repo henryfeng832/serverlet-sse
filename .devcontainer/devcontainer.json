@@ -1,11 +1,7 @@
 ﻿{
     "name": "SSE Demo (Java 8)",
-    "image": "mcr.microsoft.com/devcontainers/universal:2",
-    "features": {
-        "ghcr.io/devcontainers/features/java:1": {
-            "version": "8",
-            "jdkDistro": "zulu"
-        }
+    "build": {
+        "dockerfile": "Dockerfile"
     },
     "forwardPorts": [8080],
     "portsAttributes": {
@@ -21,6 +17,5 @@
             ]
         }
     },
-    "postCreateCommand": "mkdir -p target && echo 'Codespace ready. Run: mvn tomcat7:run'",
-    "postAttachCommand": "echo '=== 启动命令 ===\n\nmvn tomcat7:run\n================='"
+    "postCreateCommand": "echo 'Codespace is ready. Run: mvn tomcat7:run'"
 }
