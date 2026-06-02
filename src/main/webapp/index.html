@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE 长连接进度演示</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; }
+        h1 { text-align: center; color: #333; }
+        #output { background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; padding: 16px; min-height: 200px; white-space: pre-wrap; font-size: 14px; line-height: 1.8; }
+        #status { text-align: center; margin: 12px 0; color: #888; }
+        .progress-item { color: #0066cc; }
+        .complete-item { color: #28a745; font-weight: bold; }
+        button { display: block; margin: 16px auto; padding: 10px 28px; font-size: 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>SSE 长连接进度演示</h1>
+    <button id="startBtn">开始处理</button>
+    <div id="status">点击按钮启动处理任务</div>
+    <pre id="output"></pre>
+
+    <script>
+        document.getElementById("startBtn").addEventListener("click", function () {
+            var output = document.getElementById("output");
+            var status = document.getElementById("status");
+            var btn = this;
+
+            btn.disabled = true;
+            status.textContent = "连接已建立，等待进度...";
+            output.textContent = "";
+
+            var eventSource = new EventSource("/sse-demo/progress");
+
+            eventSource.addEventListener("progress", function (e) {
+                var data = JSON.parse(e.data);
+                output.innerHTML += '<div class="progress-item">>> 进度: ' + data.message + '</div>\n';
+                status.textContent = "步骤 " + data.step + " / " + data.total;
+            });
+
+            eventSource.addEventListener("complete", function (e) {
+                var data = JSON.parse(e.data);
+                output.innerHTML += '<div class="complete-item">>> 完成: ' + data.message + '</div>\n';
+                output.innerHTML += '<div class="complete-item">>> 结果: ' + data.result + '</div>\n';
+                status.textContent = "处理已完成";
+                eventSource.close();
+                btn.disabled = false;
+            });
+
+            eventSource.onerror = function () {
+                output.innerHTML += '<div style="color:#dc3545;">>> 连接异常或已关闭</div>\n';
+                status.textContent = "连接已关闭";
+                eventSource.close();
+                btn.disabled = false;
+            };
+        });
+    </script>
+</body>
+</html>
