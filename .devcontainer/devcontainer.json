@@ -1,4 +1,4 @@
-﻿{
+{
     "name": "SSE Demo (Java 8)",
     "build": {
         "dockerfile": "Dockerfile"
